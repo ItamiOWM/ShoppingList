@@ -11,27 +11,26 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
+import com.example.shoppinglist.databinding.ActivityMainBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
-
+    private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
-    private var shopItemContainer: FragmentContainerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        shopItemContainer = findViewById(R.id.fragment_shop_container)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setupRV()
         viewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
             .create(MainViewModel::class.java)
         viewModel.shopList.observe(this, Observer {
             shopListAdapter.submitList(it)
         })
-        val buttonAdd = findViewById<FloatingActionButton>(R.id.button_add_shop_item)
-        buttonAdd.setOnClickListener {
+        binding.buttonAddShopItem.setOnClickListener {
             if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
@@ -43,7 +42,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
 
     private fun isOnePaneMode(): Boolean {
-        return shopItemContainer == null
+        return binding.fragmentShopContainer == null
     }
 
     private fun launchFragment(fragment: Fragment) {
@@ -55,7 +54,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
     private fun setupRV() {
-        val rvShopList = findViewById<RecyclerView>(R.id.rv_shop_items)
+        val rvShopList = binding.rvShopItems
         shopListAdapter = ShopListAdapter()
         with(rvShopList) {
             this.adapter = shopListAdapter
